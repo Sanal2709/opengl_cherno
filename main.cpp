@@ -7,6 +7,16 @@
 #include <sstream>
 #include <string>
 
+static void GLClearError(){
+  while(glGetError() != GL_NO_ERROR){};
+}
+
+static void GLCheckError(){
+  while(GLenum error = glGetError()){
+    std::cout << "[OpenGL Error] (0x" << std::hex <<error << ")" << std::endl;
+  };
+}
+
 struct ShaderProgramSource{
   std::string VertexSource;
   std::string FragmentSource;
@@ -161,7 +171,9 @@ int main(void)
     /* Render here */
     glClear(GL_COLOR_BUFFER_BIT);
 
+    GLClearError();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    GLCheckError();
 
     /* Swap front and back buffers */
     glfwSwapBuffers(window);
