@@ -122,6 +122,8 @@ int main(void)
   /* Make the window's context current */
   glfwMakeContextCurrent(window);
 
+  glfwSwapInterval(1);
+
   if (glewInit() != GLEW_OK)
   {
     std::cout << "GLEW has not been initiated!" << std::endl;
@@ -142,9 +144,12 @@ int main(void)
     0, 2, 3
   };
 
+  
+  unsigned int vao = 0;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+
   unsigned int buffer = 0;
-  glGenVertexArrays(1, &buffer);
-  glBindVertexArray(buffer);
   glGenBuffers(1, &buffer);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
   glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);  //wtf: why size == 6*2
@@ -165,14 +170,38 @@ int main(void)
   unsigned int program = CreateProgram(source.VertexSource, source.FragmentSource);
   glUseProgram(program);
 
+  int location = glGetUniformLocation(program, "u_Color");
+  glUniform4f(location, 1.0f, 0.4f, 0.5f, 1.0f);
+
+  glBindVertexArray(0);
+  glUseProgram(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+  float r = 0.0f;
+  float increment = 0.05f;
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {
     /* Render here */
     glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     GLClearError();
+    glUseProgram(program);
+    glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
+
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    if(r > 1.0f) {
+      increment = -0.05f;
+    } else if(r < 0.0f){
+      increment = 0.05f;
+    }
+    r += increment;
     GLCheckError();
 
     /* Swap front and back buffers */
