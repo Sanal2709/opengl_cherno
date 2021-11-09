@@ -24,7 +24,7 @@
           "dependsOn": [
             "clean"
           ],
-          "command": "cmake -DCMAKE_BUILD_TYPE=Debug -B build && cd build && make -j4",
+          "command": "cmake -DCMAKE_BUILD_TYPE=Debug -B build && cd build && make -j8",
           "options": {
               "cwd": "${workspaceFolder}"
           },

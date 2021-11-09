@@ -7,6 +7,7 @@
 #include "indexBuffer.h"
 #include "vertexArray.h"
 #include "shader.h"
+#include "texture.h"
 
 #include <iostream>
 #include <memory>
@@ -54,10 +55,10 @@ int main(void)
   std::cout << glGetString(GL_VERSION) << std::endl;
 
   float positions[] = {
-    -0.5f, -0.5f,
-     0.5f, -0.5f,
-     0.5f,  0.5f,
-    -0.5f,  0.5f,
+    -0.5f, -0.5f, 0.0f, 0.0f, //0
+     0.5f, -0.5f, 1.0f, 0.0f, //1
+     0.5f,  0.5f, 1.0f, 1.0f, //2
+    -0.5f,  0.5f, 0.0f, 1.0f//3
   };
 
   unsigned int indices[] = {
@@ -66,9 +67,10 @@ int main(void)
   };
 
   VertexArray va;
-  VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+  VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
   VertexBufferLayout layout;
+  layout.Push<float>(2);
   layout.Push<float>(2);
   va.AddBuffer(vb, layout);
 
@@ -77,6 +79,10 @@ int main(void)
   Shader shader("res/shaders/basic.shader");
   shader.Bind();
   shader.SetUniform4f("u_Color", 1.0f, 0.4f, 0.5f, 1.0f);
+
+  Texture texture("res/texture/logo.png");
+  texture.Bind();
+  shader.SetUniform1i("u_Texture", 0);
 
   va.UnBind();
   vb.Unbind();

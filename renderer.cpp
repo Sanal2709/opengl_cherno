@@ -17,7 +17,7 @@ bool GLLogCall(const char * function, const char * file, int line){
 
 void Renderer::Clear() const {
   GLCall(glClear(GL_COLOR_BUFFER_BIT));
-  GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
+  //GLCall(glClearColor(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
