@@ -9,6 +9,9 @@
 #include "shader.h"
 #include "texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 #include <iostream>
 #include <memory>
 #include <fstream>
@@ -66,6 +69,9 @@ int main(void)
     0, 2, 3
   };
 
+  GLCall(glEnable(GL_BLEND));
+  GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
   VertexArray va;
   VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
@@ -76,13 +82,16 @@ int main(void)
 
   IndexBuffer ib(indices, 6);
 
+  glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
   Shader shader("res/shaders/basic.shader");
   shader.Bind();
-  shader.SetUniform4f("u_Color", 1.0f, 0.4f, 0.5f, 1.0f);
+  //shader.SetUniform4f("u_Color", 1.0f, 0.4f, 0.5f, 1.0f);
 
   Texture texture("res/texture/logo.png");
   texture.Bind();
   shader.SetUniform1i("u_Texture", 0);
+  shader.SetUniformMat4f("u_MVP", proj);
 
   va.UnBind();
   vb.Unbind();
@@ -100,7 +109,7 @@ int main(void)
     renderer.Clear();
 
     shader.Bind();
-    shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+    //shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
     renderer.Draw(va, ib, shader);
 
